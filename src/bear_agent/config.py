@@ -12,7 +12,10 @@ class Config:
     def __init__(self):
         self.openai_api_key: Optional[str] = os.getenv("OPENAI_API_KEY")
         self.default_model: str = os.getenv("BEAR_MODEL", "gpt-4")
-        self.max_tokens: int = int(os.getenv("BEAR_MAX_TOKENS", "2000"))
+        try:
+            self.max_tokens: int = int(os.getenv("BEAR_MAX_TOKENS", "2000"))
+        except ValueError:
+            self.max_tokens = 2000
 
     def validate(self) -> bool:
         """

@@ -83,10 +83,6 @@ def modify(filepath, instruction, output, model):
         agent = BearAgent(model=model)
         original_code = agent.read_file(filepath)
 
-        if original_code.startswith("Error"):
-            console.print(f"[bold red]{original_code}[/bold red]")
-            sys.exit(1)
-
         modified_code = agent.modify_code(original_code, instruction)
 
         output_path = output or filepath

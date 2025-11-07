@@ -57,11 +57,10 @@ def test_write_file(tmp_path):
     """Test file writing functionality."""
     test_file = tmp_path / "output.py"
     test_content = "def goodbye():\n    print('Goodbye!')"
-    
+
     with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
         agent = BearAgent()
-        result = agent.write_file(str(test_file), test_content)
-        assert result is True
+        agent.write_file(str(test_file), test_content)
         assert test_file.read_text() == test_content
 
 
@@ -69,8 +68,8 @@ def test_read_nonexistent_file():
     """Test reading a file that doesn't exist."""
     with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key"}):
         agent = BearAgent()
-        content = agent.read_file("/nonexistent/file.py")
-        assert content.startswith("Error reading file:")
+        with pytest.raises(IOError, match="Error reading file:"):
+            agent.read_file("/nonexistent/file.py")
 
 
 def test_clear_history():

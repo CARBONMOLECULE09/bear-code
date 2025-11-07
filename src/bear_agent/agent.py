@@ -35,14 +35,17 @@ class BearAgent:
 
         Returns:
             File contents as string
+
+        Raises:
+            IOError: If file cannot be read
         """
         try:
             with open(filepath, "r", encoding="utf-8") as f:
                 return f.read()
         except Exception as e:
-            return f"Error reading file: {str(e)}"
+            raise IOError(f"Error reading file: {str(e)}")
 
-    def write_file(self, filepath: str, content: str) -> bool:
+    def write_file(self, filepath: str, content: str) -> None:
         """
         Write content to a file.
 
@@ -50,16 +53,14 @@ class BearAgent:
             filepath: Path to the file to write
             content: Content to write
 
-        Returns:
-            True if successful, False otherwise
+        Raises:
+            IOError: If file cannot be written
         """
         try:
             with open(filepath, "w", encoding="utf-8") as f:
                 f.write(content)
-            return True
         except Exception as e:
-            print(f"Error writing file: {str(e)}")
-            return False
+            raise IOError(f"Error writing file: {str(e)}")
 
     def analyze_code(self, code: str, task: str = "analyze this code") -> str:
         """
@@ -143,6 +144,9 @@ class BearAgent:
         try:
             response = self.client.chat.completions.create(model=self.model, messages=messages)
 
+            if not response.choices:
+                return "Error: No response from AI model"
+
             assistant_message = response.choices[0].message.content
 
             # Update conversation history
@@ -167,8 +171,9 @@ class BearAgent:
 
         Returns:
             Analysis result
+
+        Raises:
+            IOError: If file cannot be read
         """
         content = self.read_file(filepath)
-        if content.startswith("Error"):
-            return content
         return self.analyze_code(content, task)
